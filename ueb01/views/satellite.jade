@@ -1,0 +1,24 @@
+!!!
+html
+    head
+        title simple norad viewer
+        link(rel='stylesheet', href='style.css')
+
+    script(type='text/javascript', src='satellite.js')
+    script
+        var norad = !{JSON.stringify(norad)}
+    body
+        div#container
+            form(method='GET', action='')
+                p
+                    label Start time (e.g. APRIL 18, 2011, 10:30:00 UTC):
+                    input(type='text', name='startTime', value='APRIL 18, 2011, 10:30:00 UTC')
+                p
+                    label End time (e.g. APRIL 18, 2011, 21:25:00 UTC):
+                    input(type='text', name='endTime', value='APRIL 18, 2011, 21:25:00 UTC')
+                p
+                    label delta t in m:
+                    input(type='text', name='delta', value='5')
+                p
+                    input(type='button', value='draw', onClick='validateInput(this.form)')
+        canvas(width: '1000px', height: '1000px')#space
