@@ -49,6 +49,7 @@ var draw = function(sat, start, end, deltaT) {
             //console.log("TLE time: " + sat.createDateFromTLE());
             //console.log("time: " + start);
             //conpute E with observation time and given time
+            var data = document.getElementById('data');
             var E = sat.E(sat.createDateFromTLE(),date);
             //console.log("E: " + E);
             //compute true anomaly
@@ -58,6 +59,7 @@ var draw = function(sat, start, end, deltaT) {
             ctx.beginPath();
             ctx.moveTo(xEarth, yEarth);
             var r = sat.r(E);
+            data.innerHTML = data.innerHTML + date.getUTCHours() + ':'  + date.getUTCMinutes() + ':' + date.getUTCSeconds() + ' ' + Math.round(wA *180/sat.earthModel.pi * 1000000) / 1000000 + ' ' + Math.round(r*1000)/1000000 + '<br>';
             //var r = sat.a;
             //console.log("scaled r: " + r*scale);
             //console.log("Math.cos(wA): " + Math.cos(wA));
