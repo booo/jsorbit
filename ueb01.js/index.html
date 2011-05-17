@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+    <head>
+        <title>simple norad viewer</title>
+        </head>
+        <script type="text/javascript" src="satellite.js"></script>
+            <script>var norad = {"name":"LNIYA 1-86","lineNumber":"1","satelliteNumber":"22671","classification":"U","lastTowDigitsYear":"93","LaunchNumber":"035","pieceOfLaunch":"A  ","epochYear":11,"epochDay":101.94525849,"firstMeanMotion":" .00058211","secondMeanMotion":" 47448-6","bstar":" 12831-3","numberZero":"0","elementNumber":" 516","checksum":"1","inclination":62.4767,"rightAscension":31.7239,"eccentricity":0.7427443,"perigee":279.1329,"meanAnomaly":11.3303,"meanMotion":2.1596653,"revolution":13156,"checksum2":"5"}
+        </script>
+
+
+        <body>
+            <div id="container">
+                <form method="GET">
+                    <p><label>Start time (e.g. APRIL 18, 2011, 10:30:00 UTC):</label>
+                    <input type="text" name="startTime" value="APRIL 18, 2011, 10:30:00 UTC"/></p>
+                    <p><label>End time (e.g. APRIL 18, 2011, 21:25:00 UTC):</label>
+                    <input type="text" name="endTime" value="APRIL 18, 2011, 21:25:00 UTC"/></p>
+                    <p><label>delta t in m:</label><input type="text" name="delta" value="5"/></p>
+                    <p><input type="button" value="draw" onClick="validateInput(this.form)"/></p>
+    </form>
+    </div>
+    <canvas width="1000px" height="1000px" id="space"></canvas>
+    <div id="data"></div>
+    </body>
+</html>
