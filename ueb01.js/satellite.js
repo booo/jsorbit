@@ -181,8 +181,8 @@ Satellite.prototype.E = function(observationTime, now) {
     var deltaMeanAnomaly = (this.tle.meanMotion/86400 * deltaT) % 360;
     console.log("deltaMeanAnomaly: " + deltaMeanAnomaly);
     console.log(this.tle.meanAnomaly*180/Math.PI+ deltaMeanAnomaly);
-    var MStart = ((this.tle.meanMotion*this.earthModel.pi*2) * (now - observationTime)/1000) % 360;
-    var MStart = MStart ;
+    var MStart = this.tle.meanAnomaly + (((this.tle.meanMotion/86400)*this.earthModel.pi*2) * (now.getTime() - observationTime.getTime())/1000);
+
        //console.log("mean anomaly at now: " + (this.earthModel.pi*2)/this.T * (now.getTime()-observationTime.getTime())/1000)*180/this.earthModel.pi;
        var ei1 = MStart;
        do {
