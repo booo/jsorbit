@@ -203,32 +203,36 @@ Satellite.prototype.E = function(observationTime, now) {
     //console.log('mean anomaly from tle: ' + this.tle.meanAnomaly*180/this.earthModel.pi % 360);
     var deltaT = (now - observationTime)/1000;
     console.log("deltaT: " + deltaT);
-    var deltaMeanAnomaly = (this.tle.meanMotion/86400 * deltaT) % 360;
+
+
+    var meanMotion = (this.tle.meanMotion/86400) * Math.PI*2;
+    var deltaMeanAnomaly = meanMotion * deltaT;
+
     console.log("deltaMeanAnomaly: " + deltaMeanAnomaly);
-    console.log(this.tle.meanAnomaly*180/Math.PI+ deltaMeanAnomaly);
-    var MStart = this.tle.meanAnomaly + (((this.tle.meanMotion/86400)*this.earthModel.pi*2) * (now.getTime() - observationTime.getTime())/1000);
+
+    var MStart = this.tle.meanAnomaly + deltaMeanAnomaly;
 
        //console.log("mean anomaly at now: " + (this.earthModel.pi*2)/this.T * (now.getTime()-observationTime.getTime())/1000)*180/this.earthModel.pi;
        var ei1 = MStart;
+       var ei;
        do {
 
-           var ei = ei1;
-           var ei1 = ei - (ei - MStart - this.tle.eccentricity* Math.sin(ei))/(1-this.tle.eccentricity*Math.cos(ei));
-           //console.log(ei1);
-       } while (Math.abs(ei1 - ei) > Math.pow(10,-6))
-       console.log("Excentric anomaly: " +  (ei1*180/this.earthModel.pi)%360);
+           ei = ei1;
+           ei1 = ei - (ei - MStart - this.tle.eccentricity* Math.sin(ei))/(1-this.tle.eccentricity*Math.cos(ei));
+       } while (Math.abs(ei1 - ei) > Math.pow(10,-6));
        return ei1;
 
 };
 
 Satellite.prototype.createDateFromTLE = function() {
-    var date = new Date("APRIL 12, 2011 00:41:10 UTC");
+    var date = new Date("APRIL 11, 2011 22:41:10 UTC");
+    console.log(date);
+    date = new Date("JANUAR 01, 2011 00:00:00 UTC");
     //TODO check this for correctness DONE ?
-    //console.log("start date: " + date);
-    //console.log("millis: " + 1000*86400*this.tle.epochDay);
-    //date = new Date(date.getTime() + 1000*this.tle.epochDay*86400);
+    date = new Date(date.getTime() + 1000*(this.tle.epochDay-1)*86400);
+    console.log(date);
     return date;
-}
+};
 
 Satellite.prototype.wA = function(E) {
     return Math.atan(Math.sqrt(1+this.tle.eccentricity)/Math.sqrt(1-this.tle.eccentricity) * Math.tan(E/2)) * 2;
