@@ -59,6 +59,7 @@ var draw = function(sat, start, end, deltaT) {
             ctx.beginPath();
             ctx.moveTo(xEarth, yEarth);
             var r = sat.r(E);
+            console.log("Radius Vektor: " + r);
             data.innerHTML = data.innerHTML + date.getUTCHours() + ':'  + date.getUTCMinutes() + ':' + date.getUTCSeconds() + ' ' + Math.round(wA *180/sat.earthModel.pi * 1000000) / 1000000 + ' ' + Math.round(r*1000)/1000000 + '<br>';
             //var r = sat.a;
             //console.log("scaled r: " + r*scale);
@@ -122,6 +123,7 @@ var Satellite = function(tle, earthModel) {
     this.T = 86400/this.tle.meanMotion;
     console.log("Orbital period: " + this.T);
     this.tle.inclination = this.tle.inclination*this.earthModel.pi/180;
+    console.log(this.tle.inclination);
     this.tle.meanAnomaly = this.tle.meanAnomaly*this.earthModel.pi/180;
     this.a = this.newtonA(); //major axis in meter
     this.b = Math.sqrt(Math.pow(this.a,2) - Math.pow(this.tle.eccentricity*this.a,2)); //minor axis in meter
@@ -146,21 +148,44 @@ Satellite.prototype.n = function(a) {
 };
 
 Satellite.prototype.ableitung = function(a) {
-	return Math.sqrt(this.earthModel.m) * (-1.5) * Math.pow(a,-2.5)
+    var sqrMy = Math.sqrt(this.earthModel.m);
+    console.log("sqrMy: " + sqrMy);
+    var x = sqrMy * (-1.5) * Math.pow(a,(-2.5)); //small
+    var y = sqrMy * (-3.5) * Math.pow(a,(-4.5)); //smaller
+    var z = 1.5 * this.earthModel.j2 * Math.pow(this.earthModel.r,2); //great number
+    var z2 = 1 - Math.pow(this.tle.eccentricity,2); //near 1
+    console.log("z2: " + z2);
+    z2 = Math.pow(z2,-1.5); //near 1.0000000555423xfasdf
+    z3 = 1 - (3/2) * Math.sin(Math.pow(this.tle.inclination,2));
+    console.log("e: " + this.tle.eccentricity);
+    console.log("sqrMy: " + sqrMy);
+    console.log("x: " + x);
+    console.log("y: " + y);
+    console.log("z: " + z);
+    console.log("z2: " + z2);
+    console.log("z3: " + z3);
+    var result = x + y * (z * z2 * z3);
+    return result;
+	/*return Math.sqrt(this.earthModel.m) * (-1.5) * Math.pow(a,-2.5)
 		+ Math.sqrt(this.earthModel.m) * (-3,5) * Math.pow(a,-4.5)
-		* (1.5 * this.earthModel.j2 * Math.pow(this.earthModel.r,2) * Math.pow(1-Math.pow(this.tle.eccentricity,2),-1.5) * (1 - (3/2) * Math.sin(this.tle.inclination)* Math.sin(this.tle.inclination)));
+		* (1.5 * this.earthModel.j2 * Math.pow(this.earthModel.r,2) * Math.pow(1-Math.pow(this.tle.eccentricity,2),-1.5) * (1 - (3/2) * Math.sin(this.tle.inclination)* Math.sin(this.tle.inclination)));*/
 };
 
 Satellite.prototype.newtonA = function(){
 
 	var ai1 = Math.pow(this.earthModel.m*Math.pow(this.T/(2*this.earthModel.pi),2),1/3); //calculate a0 here!
+    console.log("a0: " + ai1);
 	do {
 		var ai = ai1;
         console.log("ai: " + ai);
-        //console.log("n(ai): " +  this.n(ai));
+        console.log("n(ai): " +  this.n(ai));
        // console.log("n(ai) - N-Norad: " + (this.n(ai) - this.N));
-        //console.log("ableitung(ai): " + this.ableitung(ai));
-		ai1 = ai - ((this.n(ai)-this.tle.meanMotion/86400) / this.ableitung(ai));
+        var nNorad = this.tle.meanMotion*Math.PI*2/86400; //important!!!
+        console.log("N-Norad: " + nNorad);
+        console.log("N(ai) - nNorad: " + (this.n(ai) - nNorad));
+        console.log("ableitung(ai): " + this.ableitung(ai));
+        console.log("dnai/dai: " + (this.n(ai)-nNorad)/this.ableitung(ai));
+		ai1 = ai - ((this.n(ai)-nNorad) / this.ableitung(ai));
         //console.log("ai1: " + ai1);
         console.log("Math.abs(ai1 - ai): " + Math.abs(ai1 - ai));
 	} while(Math.abs(ai1 - ai) > Math.pow(10,-6) )
